@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "crispy_forms",
+    "crispy_bootstrap5",
     "corsheaders",
     "search",
     "info",
@@ -183,8 +184,8 @@ WEATHER_BIT_CONFIG = {
 LOGIN_REDIRECT_URL = "main_page"
 LOGOUT_REDIRECT_URL = "login"
 #EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-CRISPY_TEMPLATE_PACK = "bootstrap"
-
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 DEFAULT_FROM_EMAIL = 'nirmit.pce20@sot.pdpu.ac.in'
 
