@@ -4,7 +4,6 @@
 {% block title %}News for {{ city }}{% endblock %}
 
 {% block content %}
-
 <style>
     body {
         background-color: #2c3e50;
@@ -31,6 +30,7 @@
     }
 
     li {
+        position: relative;
         margin-bottom: 1.5rem;
         padding: 1rem;
         background-color: #34495e;
@@ -69,23 +69,41 @@
         line-height: 1.5;
     }
 
-    .no-news {
-        text-align: center;
-        font-size: 1.2rem;
-        color: #bdc3c7;
-        margin-top: 2rem;
+    .toggle-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        display: none;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        color: #ffffff;
+        background-color: #e74c3c;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    li:hover .toggle-button {
+        display: block;
+    }
+
+    .toggle-button:hover {
+        background-color: #c0392b;
     }
 </style>
 
 <div class="container">
     <h1>Latest News in {{ city }}</h1>
+
     {% if news_articles %}
-    <ul>
+    <ul id="news-list">
         {% for article in news_articles %}
         <li>
             <a href="{{ article.url }}" target="_blank">{{ article.title }}</a><br />
             <small>{{ article.source.name }} - {{ article.publishedAt|date:"M d, Y H:i" }}</small>
             <p>{{ article.description }}</p>
+            <button class="toggle-button">Read More</button>
         </li>
         {% endfor %}
     </ul>
