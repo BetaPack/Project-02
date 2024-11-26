@@ -24,6 +24,9 @@ import markdown
 from django.shortcuts import render
 import requests
 from info.helpers.newsapi_helper import NewsAPIHelper
+from search.helpers.photo import UnplashCityPhotoHelper
+from django.core.cache import cache
+from django.utils.text import slugify
 
 
 class SignUpView(generic.CreateView):
@@ -153,3 +156,79 @@ def localized_events(request, city):
         events = []
 
     return render(request, "info/events.html", {"events": events, "city": city})
+
+def city_recommendations(request):
+    recommendation_type = request.GET.get("type")  # Get the selected recommendation type
+    recommendations = None
+
+    # Predefined city recommendations
+    CITY_RECOMMENDATIONS = {
+        "most_events": [
+            {"name": "New York", "country": "US", "description": "The city that never sleeps, hosting countless events.", "image": "path/to/new_york.jpg"},
+            {"name": "Los Angeles", "country": "US","description": "The entertainment capital of the world.", "image": "path/to/los_angeles.jpg"},
+            {"name": "Chicago", "country": "US","description": "Known for its music festivals and cultural events.", "image": "path/to/chicago.jpg"},
+            {"name": "Miami", "country": "US","description": "A hub for international art fairs and music festivals.", "image": "path/to/miami.jpg"},
+            {"name": "Austin", "country": "US","description": "The live music capital of the world.", "image": "path/to/austin.jpg"},
+            {"name": "Las Vegas", "country": "US","description": "Renowned for its vibrant nightlife and shows.", "image": "path/to/las_vegas.jpg"},
+            {"name": "San Francisco", "country": "US","description": "Home to iconic events like Pride and Fleet Week.", "image": "path/to/san_francisco.jpg"},
+            {"name": "Seattle", "country": "US","description": "Famous for its cultural festivals and concerts.", "image": "path/to/seattle.jpg"},
+            {"name": "Boston", "country": "US","description": "Known for its historical and cultural events.", "image": "path/to/boston.jpg"},
+            {"name": "Nashville", "country": "US","description": "The heart of country music and live performances.", "image": "path/to/nashville.jpg"}
+        ],
+        "landmarks": [
+            {"name": "Paris", "country": "FR","description": "Home to the Eiffel Tower, Louvre, and Notre-Dame.", "image": "path/to/paris.jpg"},
+            {"name": "Rome", "country": "IT","description": "The eternal city, rich with ancient landmarks like the Colosseum.", "image": "path/to/rome.jpg"},
+            {"name": "London", "country": "GB","description": "Famous for Big Ben, the Tower Bridge, and Buckingham Palace.", "image": "path/to/london.jpg"},
+            {"name": "Tokyo", "country": "JP","description": "Known for its historic temples and traditional gardens.", "image": "path/to/kyoto.jpg"},
+            {"name": "Athens", "country": "GR","description": "The cradle of Western civilization with the Acropolis.", "image": "path/to/athens.jpg"},
+            {"name": "Beijing", "country": "CN", "description": "Home to the Great Wall and the Forbidden City.", "image": "path/to/beijing.jpg"},
+            {"name": "Istanbul", "country": "TR", "description": "A bridge between Europe and Asia with iconic landmarks.", "image": "path/to/istanbul.jpg"},
+            {"name": "Machu Picchu", "country": "PE", "description": "The ancient Inca citadel high in the Andes.", "image": "path/to/machu_picchu.jpg"},
+            {"name": "Cairo", "country": "EG", "description": "Famous for the Pyramids of Giza and the Sphinx.", "image": "path/to/cairo.jpg"},
+            {"name": "New Delhi", "country": "IN", "description": "Known for the Red Fort, India Gate, and Qutub Minar.", "image": "path/to/new_delhi.jpg"}
+        ],
+        "dining": [
+            {"name": "Tokyo", "country": "JP","description": "A global hub for sushi, ramen, and Michelin-starred restaurants.", "image": "path/to/tokyo.jpg"},
+            {"name": "Paris", "country": "FR","description": "Known for its exquisite pastries and haute cuisine.", "image": "path/to/paris.jpg"},
+            {"name": "Bangkok", "country": "TH","description": "A street food paradise offering incredible flavors.", "image": "path/to/bangkok.jpg"},
+            {"name": "Barcelona", "country": "ES","description": "Famous for its tapas and Catalan cuisine.", "image": "path/to/barcelona.jpg"},
+            {"name": "New York", "country": "US","description": "Diverse dining options from pizza to fine dining.", "image": "path/to/new_york.jpg"},
+            {"name": "Istanbul", "country": "TR","description": "A blend of Middle Eastern and Mediterranean flavors.", "image": "path/to/istanbul.jpg"},
+            {"name": "Hong Kong", "country": "CN","description": "Renowned for its dim sum and Cantonese cuisine.", "image": "path/to/hong_kong.jpg"},
+            {"name": "Rome", "country": "IT","description": "Known for its authentic pasta, pizza, and gelato.", "image": "path/to/rome.jpg"},
+            {"name": "Singapore", "country": "SG","description": "Home to the iconic hawker stalls and fusion cuisine.", "image": "path/to/singapore.jpg"},
+            {"name": "San Francisco", "country": "US","description": "A foodie's paradise with world-class restaurants.", "image": "path/to/san_francisco.jpg"}
+        ],
+        "art": [
+            {"name": "Florence", "country": "IT", "description": "The birthplace of the Renaissance and Michelangelo's David.", "image": "path/to/florence.jpg"},
+            {"name": "Paris", "country": "FR", "description": "Home to the Louvre and Musée d'Orsay.", "image": "path/to/paris.jpg"},
+            {"name": "New York", "country": "US", "description": "Renowned for MoMA and the Met.", "image": "path/to/new_york.jpg"},
+            {"name": "London", "country": "GB", "description": "Famous for the British Museum and Tate Modern.", "image": "path/to/london.jpg"},
+            {"name": "Berlin", "country": "DE", "description": "A modern art hub with countless galleries.", "image": "path/to/berlin.jpg"},
+            {"name": "Venice", "country": "IT", "description": "Known for its Biennale art exhibitions.", "image": "path/to/venice.jpg"},
+            {"name": "Amsterdam", "country": "NL", "description": "Home to the Van Gogh Museum and Rijksmuseum.", "image": "path/to/amsterdam.jpg"},
+            {"name": "Vienna", "country": "AT", "description": "Rich with classical art and architecture.", "image": "path/to/vienna.jpg"},
+            {"name": "Tokyo", "country": "JP", "description": "A blend of traditional and modern art.", "image": "path/to/tokyo.jpg"},
+            {"name": "Los Angeles", "country": "US", "description": "Home to the Getty Center and LACMA.", "image": "path/to/los_angeles.jpg"}
+        ]
+    }
+
+    recommendations = CITY_RECOMMENDATIONS.get(recommendation_type, [])
+
+    for city in recommendations:
+        city["photo_link"] = generate_city_photo_link(city["name"])
+
+    return render(request, "info/recommendations.html", {
+        "recommendations": recommendations,
+        "type": recommendation_type,
+    })
+
+def generate_city_photo_link(city_name):
+    # Generate a sanitized cache key
+    cache_key = slugify(f"{city_name}-photo_link")
+    photo_link = cache.get(cache_key)
+    if not photo_link:
+        photo_link = UnplashCityPhotoHelper().get_city_photo(city=city_name)
+        cache.set(cache_key, photo_link, timeout=60 * 60 * 24)  # Cache for 24 hours
+    return photo_link
+

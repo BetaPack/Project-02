@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}City Recommendations{% endblock %}
+
+{% block content %}
+
+<style>
+    body {
+        background-color: #2c3e50;
+        color: #ecf0f1;
+        font-family: Arial, sans-serif;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+        text-align: center;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+        color: #f39c12;
+        margin-bottom: 1.5rem;
+    }
+
+    .recommend-form {
+        margin-bottom: 2rem;
+    }
+
+    .recommend-form select,
+    .recommend-form button {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        margin: 0.5rem;
+    }
+
+    .recommend-form button {
+        background-color: #f39c12;
+        color: #ffffff;
+        font-weight: bold;
+        transition: background-color 0.3s;
+    }
+
+    .recommend-form button:hover {
+        background-color: #d35400;
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    li {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background-color: #34495e;
+        border-radius: 8px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s, box-shadow 0.3s;
+        cursor: pointer;
+    }
+
+    li:hover {
+        transform: translateY(-5px);
+        box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    img {
+        width: 100%;
+        height: auto;
+        max-height: 200px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        object-fit: cover;
+    }
+
+    a {
+        font-size: 1.2rem;
+        color: #1abc9c;
+        text-decoration: none;
+        font-weight: bold;
+        transition: color 0.3s;
+    }
+
+    a:hover {
+        color: #f39c12;
+    }
+
+    p {
+        font-size: 1rem;
+        color: #ecf0f1;
+        line-height: 1.5;
+    }
+
+    .no-recommendations {
+        text-align: center;
+        font-size: 1.2rem;
+        color: #bdc3c7;
+        margin-top: 2rem;
+    }
+
+    .city-image {
+        width: 100%;
+        height: auto;
+        max-height: 200px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        object-fit: cover;
+    }
+</style>
+
+<div class="container">
+    <h1>City Recommendations</h1>
+
+    <!-- Dropdown to Select Recommendation Type -->
+    <form class="recommend-form" method="get" action="{% url 'city_recommendations' %}">
+        <label for="type" style="color:black">Choose Recommendation Type:</label>
+        <select name="type" id="type">
+            <option value="most_events" {% if type == "most_events" %}selected{% endif %}>Most Events</option>
+            <option value="landmarks" {% if type == "landmarks" %}selected{% endif %}>Most Landmarks</option>
+            <option value="dining" {% if type == "dining" %}selected{% endif %}>Best Dining Spots</option>
+            <option value="art" {% if type == "art" %}selected{% endif %}>Top Art Spots</option>
+        </select>
+        <button type="submit">Recommend</button>
+    </form>
+
+    <!-- Recommendations List -->
+    {% if recommendations %}
+    <ul class="city-list">
+        {% for city in recommendations %}
+        <li class="city-item" onclick="redirectToCityInfo('{{ city.name }}', '{{ city.country }}')">
+            <img src="{{ city.photo_link }}" alt="{{ city.name }}" class="city-image" />
+            <h3>{{ city.name }}, {{ city.country }}</h3>
+            <p>{{ city.description }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No recommendations available.</p>
+    {% endif %}
+</div>
+
+<script>
+    function redirectToCityInfo(city, country) {
+        location.href = "{% url 'info_page' %}?city=" + encodeURIComponent(city) + "&country=" + encodeURIComponent(country);
+    }
+</script>
+
+<style>
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .city-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .city-item {
+        margin: 20px 0;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        text-align: center;
+        cursor: pointer;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .city-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .city-image {
+        width: 100%;
+        height: auto;
+        max-height: 200px;
+        border-radius: 5px;
+        object-fit: cover;
+    }
+
+    h3 {
+        margin-top: 10px;
+        font-size: 1.5em;
+    }
+
+    p {
+        color: #cf7171;
+    }
+</style>
+
+{% endblock %}
