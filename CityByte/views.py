@@ -22,6 +22,7 @@ from langchain.chains import LLMChain
 import os
 import markdown
 from django.shortcuts import render
+import requests
 from info.helpers.newsapi_helper import NewsAPIHelper
 
 
@@ -88,3 +89,67 @@ def city_news(request, city, country):
         "news_articles": news_articles
     }
     return render(request, "info/news.html", context)
+
+def localized_events(request, city):
+    # Ticketmaster API settings
+    API_URL = "https://app.ticketmaster.com/discovery/v2/events.json"
+    API_KEY = "PvA6nBY89MHNAG6jrquNBGidGlkkhwkl"
+
+    params = {
+        "apikey": API_KEY,
+        "city": city,
+        "radius": 50,
+        "unit": "miles",
+        "size": 10,
+        "sort": "date,asc",
+    }
+
+    try:
+        response = requests.get(API_URL, params=params)
+        response.raise_for_status()
+
+        raw_events = response.json().get("_embedded", {}).get("events", [])
+        events = []
+        for event in raw_events:
+            # Extract event details
+            name = event.get("name")
+            url = event.get("url", "#")
+            date = event.get("dates", {}).get("start", {}).get("localDate")
+            time = event.get("dates", {}).get("start", {}).get("localTime", "TBA")
+            venue = event.get("_embedded", {}).get("venues", [{}])[0].get("name")
+            city_name = event.get("_embedded", {}).get("venues", [{}])[0].get("city", {}).get("name")
+            price_min = event.get("priceRanges", [{}])[0].get("min")
+            price_max = event.get("priceRanges", [{}])[0].get("max")
+            image = event.get("images", [{}])[0].get("url")
+            description = event.get("info", "No description available")
+
+            # Calculate completeness score
+            completeness_score = sum([
+                2 if bool(description and description != "No description available") else 0,  # +2 if description exists
+                bool(venue),  # +1 if venue exists
+                bool(price_min and price_max),  # +1 if price range exists
+                3 if bool(image) else 0,  # +3 if image exists
+            ])
+
+            # Append event with all details and score
+            events.append({
+                "name": name,
+                "url": url,
+                "date": date,
+                "time": time,
+                "venue": venue,
+                "city": city_name,
+                "price_min": price_min,
+                "price_max": price_max,
+                "image": image,
+                "description": description,
+                "score": completeness_score,  # Include score for sorting
+            })
+
+        # Sort events by score in descending order
+        events.sort(key=lambda e: e["score"], reverse=True)
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching events: {e}")
+        events = []
+
+    return render(request, "info/events.html", {"events": events, "city": city})
