@@ -91,20 +91,41 @@ def city_news(request, city, country):
     return render(request, "info/news.html", context)
 
 def localized_events(request, city):
-    api_key = "CRBX2HMCMX7QWVLMEDRU"
-    url = "https://www.eventbriteapi.com/v3/events/search/"
+    # Ticketmaster API settings
+    API_URL = "https://app.ticketmaster.com/discovery/v2/events.json"
+    API_KEY = "PvA6nBY89MHNAG6jrquNBGidGlkkhwkl"
+
     params = {
-        "location.address": city,
-        "location.within": "50km",
-        "sort_by": "date",
-        "token": api_key,
+        "apikey": API_KEY,
+        "city": city,
+        "radius": 50,
+        "unit": "miles",
+        "size": 10,
+        "sort": "date,asc",
     }
 
     try:
-        response = requests.get(url, params=params)
+        response = requests.get(API_URL, params=params)
         response.raise_for_status()
-        events = response.json().get("events", [])
-    except requests.exceptions.RequestException:
+
+        raw_events = response.json().get("_embedded", {}).get("events", [])
+        events = []
+        for event in raw_events:
+            # Use .get() to safely access fields
+            events.append({
+                "name": event.get("name"),
+                "url": event.get("url", "#"),
+                "date": event.get("dates", {}).get("start", {}).get("localDate"),  # Safely get date
+                "time": event.get("dates", {}).get("start", {}).get("localTime", "TBA"),  # Fallback to "TBA" if not available
+                "venue": event.get("_embedded", {}).get("venues", [{}])[0].get("name"),
+                "city": event.get("_embedded", {}).get("venues", [{}])[0].get("city", {}).get("name"),
+                "price_min": event.get("priceRanges", [{}])[0].get("min"),
+                "price_max": event.get("priceRanges", [{}])[0].get("max"),
+                "image": event.get("images", [{}])[0].get("url"),
+                "description": event.get("info", "No description available"),  # Fallback description
+            })
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching events: {e}")
         events = []
 
     return render(request, "info/events.html", {"events": events, "city": city})

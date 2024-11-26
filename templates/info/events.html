@@ -69,6 +69,14 @@
         line-height: 1.5;
     }
 
+    .event-image {
+        width: 100%; /* Scale to fit the container */
+        height: 200px; /* Fixed height */
+        object-fit: cover; /* Crop image to fit the height */
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
+
     .no-events {
         text-align: center;
         font-size: 1.2rem;
@@ -83,9 +91,18 @@
     <ul>
         {% for event in events %}
         <li>
-            <a href="{{ event.url }}" target="_blank">{{ event.name.text }}</a><br />
-            <small>{{ event.start.local|date:"M d, Y H:i" }}</small>
-            <p>{{ event.description.text|truncatechars:150 }}</p>
+            {% if event.image %}
+            <img src="{{ event.image }}" alt="{{ event.name }}" class="event-image" />
+            {% endif %}
+            <a href="{{ event.url }}" target="_blank">{{ event.name }}</a><br />
+            <small><strong>Date:</strong> {{ event.date }} {{ event.time }}</small>
+            {% if event.venue %}
+            <small><strong>Venue:</strong> {{ event.venue }}, {{ event.city }}</small>
+            {% endif %}
+            {% if event.price_min and event.price_max %}
+            <small><strong>Price:</strong> ${{ event.price_min }} - ${{ event.price_max }}</small>
+            {% endif %}
+            <p>{{ event.description }}</p>
         </li>
         {% endfor %}
     </ul>
