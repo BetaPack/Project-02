@@ -182,8 +182,8 @@ NEWSAPI_CONFIG = {
 LOGIN_REDIRECT_URL = "main_page"
 LOGOUT_REDIRECT_URL = "login"
 # EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-CRISPY_TEMPLATE_PACK = "bootstrap"
-
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'nirmit.pce20@sot.pdpu.ac.in'
