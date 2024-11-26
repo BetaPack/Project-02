@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/workspaces/Project-02/citybyte"
+set -gx VIRTUAL_ENV "/Users/ashwinidineshramanuj/Documents/SEM1/SE/CityByte-main/citybyte"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH

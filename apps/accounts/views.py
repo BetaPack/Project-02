@@ -10,12 +10,14 @@ class CustomLoginView(LoginView):
             return redirect('main_page')  # Redirect to the main page if already logged in
         return super().get(request, *args,**kwargs)
 
+
+
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
-            #auth_login(request, user)
+            auth_login(request, user)
             return redirect('login')
     else:
         form = SignUpForm()

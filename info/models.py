@@ -22,7 +22,6 @@ class Comment(models.Model):
     class Meta:
         unique_together = ('author', 'comment')
 
-
 class FavCityEntry(models.Model):
     city = models.CharField(max_length=125)
     country = models.CharField(max_length=125)
@@ -31,4 +30,4 @@ class FavCityEntry(models.Model):
     def __str__(self):
         return f"{self.city}-{self.country}-{self.user.username}"
     class Meta:
-        unique_together = (('user', 'city', 'country'))
+        unique_together = (('user', 'city', 'country'),)

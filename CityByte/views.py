@@ -21,6 +21,8 @@ from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 import os
 import markdown
+from django.shortcuts import render
+from info.helpers.newsapi_helper import NewsAPIHelper
 
 
 class SignUpView(generic.CreateView):
@@ -75,3 +77,14 @@ def city_info(request, city_name):
             'city': city_name,
             'itinerary': itinerary
         })
+    
+def city_news(request, city, country):
+    news_api_helper = NewsAPIHelper()
+    news_articles = news_api_helper.get_city_news(city)
+
+    context = {
+        "city": city,
+        "country": country,
+        "news_articles": news_articles
+    }
+    return render(request, "info/news.html", context)

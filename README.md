@@ -1,14 +1,14 @@
 # CityByte Project 2
 
 [![Test](https://github.com/rohitgeddam/CityByte/actions/workflows/django.yml/badge.svg)](https://github.com/rohitgeddam/CityByte/actions/workflows/django.yml)
-[![codecov](https://codecov.io/gh/AshwiniR1802/CityByte-main/graph/badge.svg?token=QIBKVW0QLW)](https://codecov.io/gh/AshwiniR1802/CityByte-main)
-![Code Size](https://img.shields.io/github/languages/code-size/SE-H-W/Project-02)
-![Repo Size](https://img.shields.io/github/repo-size/SE-H-W/Project-02)
-[![DOI](https://zenodo.org/badge/877602165.svg)](https://doi.org/10.5281/zenodo.14027838)
+[![codecov](https://codecov.io/gh/rohitgeddam/FindMyRoomie/branch/main/graph/badge.svg?token=PCOHJETYCD)](https://codecov.io/gh/rohitgeddam/FindMyRoomie)
+[![code_size](https://img.shields.io/github/languages/code-size/rohitgeddam/CityByte)](https://github.com/rohitgeddam/CityByte) 
+[![repo_size](https://img.shields.io/github/repo-size/rohitgeddam/CityByte)](https://github.com/rohitgeddam/CityByte)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7155519.svg)](https://doi.org/10.5281/zenodo.7155519)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-![GitHub issues](https://img.shields.io/github/issues/SE-H-W/Project-02)
-![GitHub issues-closed](https://img.shields.io/github/issues-closed/SE-H-W/Project-02)
-[![GitHub version](https://img.shields.io/github/v/release/rohitgeddam/CityByte)](https://github.com/SE-H-W/Project-02/releases)
+[![GitHub issues](https://img.shields.io/github/issues/rohitgeddam/CityByte.svg)](https://GitHub.com/rohitgeddam/CityByte/issues/)
+[![GitHub issues-closed](https://img.shields.io/github/issues-closed/rohitgeddam/CityByte.svg)](https://GitHub.com/rohitgeddam/CityByte/issues?q=is%3Aissue+is%3Aclosed)
+[![GitHub version](https://img.shields.io/github/v/release/rohitgeddam/CityByte)](https://github.com/rohitgeddam/CityByte/releases)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 
@@ -16,24 +16,29 @@
 New and improved! Several new features and bug fixes were implemented to show significant improvement from Project 1.
 
 Below are the new features and improvements we made:
-1. Itinerary Creation: Users can build personalized itineraries for their trips by specifying the number of travel days, making CityByte a complete travel planner.
-2. City-Specific News Page: Real-time updates on local news for each searched city, keeping users informed about events and current affairs.
-3. Google Maps Integration: Each displayed spot is clickable, opening the location directly in Google Maps in a new tab, enhancing ease of use.
-4. Forgot Password Feature: Improved account management with secure recovery options, ensuring smooth access to user accounts.
-5. UI Enhancements: The interface is redesigned for an intuitive, visually appealing experience, making it easier for users to navigate the platform. 
-
-## New Project
-Below is the video and the changes or features we added
-[<img width="1447" alt="Screenshot 2024-11-02 at 12 23 26 PM" src="https://github.com/user-attachments/assets/90a4c2b2-a7ab-4ec7-ab9d-7ac674a08c64">](https://youtu.be/an7c3hxpj3A)
-
-[<img width="1458" alt="image" src="https://github.com/user-attachments/assets/05b3aeaf-a412-4a9f-ac42-25f1ed13f26c">](https://drive.google.com/file/d/1cxWi9nhs5HRcJ6IL6EqB4kh6kklEubK8/view?usp=drive_link)
+1. Implemented a wish list/to-go list to save interesting locations so you can come back and look at them later :fire:
+2. Implement Caching to get API results faster :rocket:
+3. Created a signup/login page - having an account goes a long way when we add new features that are customized for the user!
+4. Comment Page - you can comment on the place and look at all the other comments that have been posted!
+5. Fixed WeatherApi Bug :bug:
+6. Implemented social media page and support contact information. 
 
 ## Old Project - In Brief
-Below is the old projects:
+Below is a video of the old project:
+
+[<img width="902" alt="image" src="https://user-images.githubusercontent.com/46688470/204404965-d3084c6c-b062-4eec-8b10-0ef95a577bd6.png">](https://drive.google.com/file/d/1FVJDir9ZufbAiUGe7AfzZvTfF7HWr58e/view?usp=sharing)
+
+
+## New Project
+Below is a video of the significant improvements we made:
+
 
 https://drive.google.com/file/d/1sUewnnTpuXX3s8nMnpnR0WZhVM-c8L1a/view?usp=sharing
 
-## Architecture
+## Old Architecture
+![1](https://user-images.githubusercontent.com/53405794/205814769-89810a17-8ab8-4065-baf4-dfea256b9263.png)
+
+## New Architecture
 ![2](https://user-images.githubusercontent.com/53405794/205814790-7c3f2cdc-59dc-47b6-92df-bddd8c5208df.png)
 
 ## Improvements
@@ -65,7 +70,7 @@ Results:
 
 #### 1. Clone the repository:  
 
-   `[git clone https://github.com/rohitgeddam/CityByte.git](https://github.com/SE-H-W/Project-02.git)`
+   `git clone https://github.com/rohitgeddam/CityByte.git`
 
 #### 2. Setup the virtual environment:  
     
@@ -107,17 +112,13 @@ Results:
     FOURSQUARE_API_KEY=""
     WEATHER_BIT_X_RAPID_API_KEY=""
     WEATHER_BIT_X_RAPID_API_HOST=""
-    NEWSAPI_KEY=""
-    GOOGLE_GEMINI_API=""
 ```
 Create an account in the below websites to Fetch API keys and use them in the above template.  
 * [GeoDB Cities API](https://rapidapi.com/wirefreethought/api/geodb-cities/details)
 * [Weather API](https://rapidapi.com/weatherbit/api/weather)
 * [Amadeus API](https://developers.amadeus.com/)
 * [Unsplash API](https://unsplash.com/developers)
-* [Foursquare API](https://location.foursquare.com/developer/)
-* [Google Gemini API](https://ai.google.dev/gemini-api?gad_source=1&gclid=CjwKCAjw-JG5BhBZEiwAt7JR6xbYStbhA4cIvBvOPV2aUgrqJP37xjoj4M6G8qO8ltx6w85IYaCSTBoC0cYQAvD_BwE)
-* [News API](https://newsapi.org/)
+* [Foursquare API](https://location.foursquare.com/developer/)  
 
 #### 6. Set-up REDIS
 * Follow the instructions in [Getting Started](https://redis.io/docs/getting-started/) to Install Redis in your local environment.
@@ -198,23 +199,29 @@ If you prefer using Black in VSCode, you can add the below settings in your vsco
 ## License
 Distributed under the MIT License. See `LICENSE` for more information
 
+## Team Members
+1. Rohit Geddam: sgeddam2@ncsu.edu
+2. Arun Kumar Ramesh - arames25@ncsu.edu
+3. Kiron Jayesh - kjayesh@ncsu.edu
+4. Sai Krishna Teja Varma - smanthe@ncsu.edu
+5. Shandler Mason - samason4@ncsu.edu
+
 
 ## Support
 Concerns with the software? Please get in touch with us via one of the methods below. We are delighted to address any queries you may have about the program.
 
 Please contact us if you experience any problems with the program, such as problems with joining up, logging in, or any other functions.
 
-<a href = "mailto:aramanu3@ncsu.edu">
+<a href = "mailto:citybyte.support@proton.me">
 <img width = "35px" src = "https://user-images.githubusercontent.com/73664200/194786335-12b1d3a6-b272-4896-9bd7-d615e28847f3.png"/>
 </a>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-#Team Members
-1. Ashwini Ramanuj: aramanu3@ncsu.edu
-2. Nirmit Patel: naptel37@ncsu.edu
-3. Kahaan Patel: kaptel48@ncsu.edu
+<a href = "https://twitter.com/CityByteSupport">  
+<img width = "35px" src = "https://raw.githubusercontent.com/peterthehan/peterthehan/master/assets/twitter.svg"/>
+</a> 
 
 # CityByte Project 1
+
 
 [![DOI](https://zenodo.org/badge/541612969.svg)](https://zenodo.org/badge/latestdoi/541612969) ![](https://img.shields.io/github/license/therealppk/CityByte) ![](https://img.shields.io/github/issues/therealppk/CityByte?style=plastic) ![](https://img.shields.io/github/issues-closed-raw/therealppk/CityByte?style=plastic) ![](https://img.shields.io/github/languages/code-size/therealppk/CityByte?style=plastic) ![](https://img.shields.io/github/contributors/therealppk/CityByte?style=plastic) [![Django CI](https://github.com/therealppk/CityByte/actions/workflows/django.yml/badge.svg)](https://github.com/therealppk/CityByte/actions/workflows/django.yml)
 [![codecov](https://codecov.io/gh/therealppk/CityByte/branch/main/graph/badge.svg?token=HRK9X7OI2J)](https://codecov.io/gh/therealppk/CityByte)
@@ -242,9 +249,26 @@ The technologies listed below were used to build the entire project, and it is a
 
 Although we have used HTML, CSS and Bootstrap for the frontend logic the user can use any technologies and combine it with backend such as Angular, React etc.
 
+## Result
+The below screenshots give the glance of the working of our project:
+
+![](https://github.com/therealppk/CityByte/blob/main/docs/assets/City%206.png)
+![](https://github.com/therealppk/CityByte/blob/main/docs/assets/City%208.png)
+![](https://github.com/therealppk/CityByte/blob/main/docs/assets/City%209.png) 
+![](https://github.com/therealppk/CityByte/blob/main/docs/assets/City%2010.png)
+
+## Deployment:
+This project is deployed on AWS and is live at http://3.88.233.194:8000/
+
+## Future Scope
+* Caching results from API using Redis in order to improve the performance.
+* Addition of search bar with category filter, that will help the user to search based on his/ her requirements.
+* To run multiple API requests simultaneously, multithreading will be used.
+
 ## Team Members
-1. Rohit Geddam: sgeddam2@ncsu.edu
-2. Arun Kumar Ramesh - arames25@ncsu.edu
-3. Kiron Jayesh - kjayesh@ncsu.edu
-4. Sai Krishna Teja Varma - smanthe@ncsu.edu
-5. Shandler Mason - samason4@ncsu.edu
+
+* Nirav Shah - nshah28
+* Vishwa Gandhi - vgandhi
+* Pradyumna Khawas - ppkhawas
+* Vrushanki Patel - vpatel25
+* Priya Saroj - pbsaroj

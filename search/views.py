@@ -66,15 +66,29 @@ def initialize_gemini_llm():
 def city_info(request, city_name):
     itinerary = None  # To store the generated itinerary
     if request.method == 'POST':
+        # Get the number of days from the form input
         days = request.POST.get('days')
+
+        # Initialize Gemini LLM
         my_llm = initialize_gemini_llm()
+
+        # Create a prompt template with placeholders for the city and number of days
         my_prompt = PromptTemplate.from_template('Create an itinerary for {placename} for {num} days')
+        
+        # Create the chain
         chain = LLMChain(llm=my_llm, prompt=my_prompt, verbose=False)
+        
+        # Define both place and num
         inputs = {'placename': city_name, 'num': days}
+        
+        # Invoke the chain with both inputs
         response = chain.invoke(input=inputs)
+        
+        # Get the response text from the LLM
         itinerary = response
+
+        # Render the new itinerary page with the generated HTML
         return render(request, 'info/itinerary.html', {
             'city': city_name,
             'itinerary': itinerary
         })
-

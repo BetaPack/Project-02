@@ -1,3 +1,21 @@
+# from datetime import datetime
+# import json
+# import pytz
+# from django.shortcuts import render, redirect
+# from django.views.decorators.http import require_http_methods
+
+# from info.helpers.places import FourSquarePlacesHelper
+# from info.helpers.weather import WeatherBitHelper
+# from search.helpers.photo import UnplashCityPhotoHelper
+# from .models import CitySearchRecord, Comment, FavCityEntry
+# from django.core.cache import cache
+# from .forms import CommentForm
+
+# from django.http import JsonResponse
+# from django.contrib.auth.decorators import login_required
+# from django.contrib import messages
+# from django.db.models import Count
+
 from datetime import datetime
 import json
 import pytz
@@ -15,9 +33,6 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Count
-
-
-
 @login_required()
 def addTofav(request):
 
@@ -122,7 +137,7 @@ def info_page(request):
     if not news_articles:
         news_articles = NewsAPIHelper().get_city_news(city_name=city)
         cache.set(f"{city}-news", news_articles)
-        
+
     dining_info = cache.get(f"{city}-dinning")
     if not dining_info:
         dining_info = FourSquarePlacesHelper().get_places(
@@ -182,9 +197,6 @@ def info_page(request):
         > 0
         else False
     )
-
-
-    # Render the template with all data
     return render(
         request,
         "search/city_info.html",
@@ -200,11 +212,9 @@ def info_page(request):
             "city": city,
             "country": country,
             "isInFav": isInFav,
-            "news_articles": news_articles,  # Include news in context
+            "news_articles": news_articles,
         },
     )
-
-   
 
 
 @login_required()
