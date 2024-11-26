@@ -88,3 +88,61 @@ def city_news(request, city, country):
         "news_articles": news_articles
     }
     return render(request, "info/news.html", context)
+
+def city_recommendations(request):
+    recommendation_type = request.GET.get("type")  # Get recommendation type from query params
+    recommendations = None
+
+    # If no type is selected, show only the selection form
+    if not recommendation_type:
+        return render(request, 'info/recommendations.html', {"recommendations": None, "type": None})
+
+    # Define LLM Prompt
+    recommendation_prompt = {
+        "most_events": "List cities with the most events happening currently, with a description and image URL.",
+        "landmarks": "List cities with the most famous landmarks, with a description and image URL.",
+        "dining": "List cities with the best dining experiences, with a description and image URL.",
+        "art": "List cities known for art and cultural scenes, with a description and image URL."
+    }.get(recommendation_type, "List top cities for travel recommendations.")
+
+    try:
+        # Initialize LLM
+        my_llm = initialize_gemini_llm()
+        my_prompt = PromptTemplate.from_template(recommendation_prompt)
+        chain = LLMChain(llm=my_llm, prompt=my_prompt, verbose=False)
+
+        # Call LLM
+        response = chain.invoke(input={})
+        recommendations = parse_llm_response(response['text'])
+
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        recommendations = None
+
+    return render(request, 'info/recommendations.html', {
+        "recommendations": recommendations,
+        "type": recommendation_type,
+    })
+
+
+def parse_llm_response(response_text):
+    """
+    Parses the LLM response into structured data.
+    """
+    recommendations = []
+    lines = response_text.split("\n")
+    for line in lines:
+        if line.strip():
+            try:
+                parts = line.split(":")
+                city = parts[0].strip(" -**")
+                description, image_url = parts[1].rsplit("(", 1)
+                image_url = image_url.strip(")")
+                recommendations.append({
+                    "name": city,
+                    "description": description.strip(),
+                    "image": image_url.strip()
+                })
+            except (IndexError, ValueError):
+                continue
+    return recommendations

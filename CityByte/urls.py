@@ -21,5 +21,6 @@ urlpatterns = [
     path("api/addToFav/", addTofav, name="addToFav"),
     path('city/<str:city_name>/', views.city_info, name='city_info'),
     path('city/<str:city>/<str:country>/news/', views.city_news, name='city_news'),
+    path("recommendations/", views.city_recommendations, name="city_recommendations")
     # path('city/<str:city>/news/', views.city_news, name='city_news'),
 ]
