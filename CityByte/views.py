@@ -22,6 +22,7 @@ from langchain.chains import LLMChain
 import os
 import markdown
 from django.shortcuts import render
+import requests
 from info.helpers.newsapi_helper import NewsAPIHelper
 
 
@@ -88,3 +89,22 @@ def city_news(request, city, country):
         "news_articles": news_articles
     }
     return render(request, "info/news.html", context)
+
+def localized_events(request, city):
+    api_key = "CRBX2HMCMX7QWVLMEDRU"
+    url = "https://www.eventbriteapi.com/v3/events/search/"
+    params = {
+        "location.address": city,
+        "location.within": "50km",
+        "sort_by": "date",
+        "token": api_key,
+    }
+
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        events = response.json().get("events", [])
+    except requests.exceptions.RequestException:
+        events = []
+
+    return render(request, "info/events.html", {"events": events, "city": city})

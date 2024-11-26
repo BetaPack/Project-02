@@ -138,6 +138,21 @@
     justify-content: center;
     margin: 2rem 0;
   }
+
+  .party {
+        font-size: 2.5rem;
+        position: absolute;
+        top: 10%;
+        left: 5%; /* Position relative to the left */
+        margin: 16px;
+        cursor: pointer;
+        color: #f39c12;
+    }
+
+    .party:hover {
+        transform: scale(1.1);
+        color: #e67e22;
+    }
 </style>
 
 <div class="container-fluid" style="padding: 0;">
@@ -161,12 +176,19 @@
     </div>
   </div>
 
-  <div style="width: 100%;">
+  <div style="width: 100%; position: relative;">
     <span
       class="fa fa-heart fav"
       id="fav-toggle"
       onClick="favToggle(event)"
     ></span>
+
+    <span
+        class="fa fa-glass-cheers party"
+        id="events-toggle"
+        onclick="goToEventsPage('{{ city }}', '{{ country }}')"
+        title="View events in {{ city }}"
+    >🎉</span>
   </div>
 
   {% if weather_info %}
@@ -395,5 +417,11 @@
     {% endif %}
   </div>
 </div>
+<script>
+  function goToEventsPage(city) {
+      const url = `/info/events/${city}/`; // Add trailing slash to match URL pattern
+      window.location.href = url; // Redirect to the events page
+  }
+</script>
 
 {% endblock %}
