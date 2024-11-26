@@ -23,6 +23,9 @@ import os
 import markdown
 from django.shortcuts import render
 from info.helpers.newsapi_helper import NewsAPIHelper
+from search.helpers.photo import UnplashCityPhotoHelper
+from django.core.cache import cache
+from django.utils.text import slugify
 
 
 class SignUpView(generic.CreateView):
@@ -147,7 +150,20 @@ def city_recommendations(request):
 
     recommendations = CITY_RECOMMENDATIONS.get(recommendation_type, [])
 
+    for city in recommendations:
+        city["photo_link"] = generate_city_photo_link(city["name"])
+
     return render(request, "info/recommendations.html", {
         "recommendations": recommendations,
         "type": recommendation_type,
     })
+
+def generate_city_photo_link(city_name):
+    # Generate a sanitized cache key
+    cache_key = slugify(f"{city_name}-photo_link")
+    photo_link = cache.get(cache_key)
+    if not photo_link:
+        photo_link = UnplashCityPhotoHelper().get_city_photo(city=city_name)
+        cache.set(cache_key, photo_link, timeout=60 * 60 * 24)  # Cache for 24 hours
+    return photo_link
+

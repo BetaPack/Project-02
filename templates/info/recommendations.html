@@ -103,6 +103,15 @@
         color: #bdc3c7;
         margin-top: 2rem;
     }
+
+    .city-image {
+        width: 100%;
+        height: auto;
+        max-height: 200px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        object-fit: cover;
+    }
 </style>
 
 <div class="container">
@@ -124,8 +133,8 @@
     {% if recommendations %}
     <ul class="city-list">
         {% for city in recommendations %}
-        <li class="city-item auto-complete-li" onclick="redirectToCityInfo('{{ city.name }}', '{{ city.country }}')">
-            <img src="{{ city.image }}" alt="{{ city.name }}" class="city-image" />
+        <li class="city-item" onclick="redirectToCityInfo('{{ city.name }}', '{{ city.country }}')">
+            <img src="{{ city.photo_link }}" alt="{{ city.name }}" class="city-image" />
             <h3>{{ city.name }}, {{ city.country }}</h3>
             <p>{{ city.description }}</p>
         </li>
