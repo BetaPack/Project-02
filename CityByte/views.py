@@ -111,19 +111,43 @@ def localized_events(request, city):
         raw_events = response.json().get("_embedded", {}).get("events", [])
         events = []
         for event in raw_events:
-            # Use .get() to safely access fields
+            # Extract event details
+            name = event.get("name")
+            url = event.get("url", "#")
+            date = event.get("dates", {}).get("start", {}).get("localDate")
+            time = event.get("dates", {}).get("start", {}).get("localTime", "TBA")
+            venue = event.get("_embedded", {}).get("venues", [{}])[0].get("name")
+            city_name = event.get("_embedded", {}).get("venues", [{}])[0].get("city", {}).get("name")
+            price_min = event.get("priceRanges", [{}])[0].get("min")
+            price_max = event.get("priceRanges", [{}])[0].get("max")
+            image = event.get("images", [{}])[0].get("url")
+            description = event.get("info", "No description available")
+
+            # Calculate completeness score
+            completeness_score = sum([
+                2 if bool(description and description != "No description available") else 0,  # +2 if description exists
+                bool(venue),  # +1 if venue exists
+                bool(price_min and price_max),  # +1 if price range exists
+                3 if bool(image) else 0,  # +3 if image exists
+            ])
+
+            # Append event with all details and score
             events.append({
-                "name": event.get("name"),
-                "url": event.get("url", "#"),
-                "date": event.get("dates", {}).get("start", {}).get("localDate"),  # Safely get date
-                "time": event.get("dates", {}).get("start", {}).get("localTime", "TBA"),  # Fallback to "TBA" if not available
-                "venue": event.get("_embedded", {}).get("venues", [{}])[0].get("name"),
-                "city": event.get("_embedded", {}).get("venues", [{}])[0].get("city", {}).get("name"),
-                "price_min": event.get("priceRanges", [{}])[0].get("min"),
-                "price_max": event.get("priceRanges", [{}])[0].get("max"),
-                "image": event.get("images", [{}])[0].get("url"),
-                "description": event.get("info", "No description available"),  # Fallback description
+                "name": name,
+                "url": url,
+                "date": date,
+                "time": time,
+                "venue": venue,
+                "city": city_name,
+                "price_min": price_min,
+                "price_max": price_max,
+                "image": image,
+                "description": description,
+                "score": completeness_score,  # Include score for sorting
             })
+
+        # Sort events by score in descending order
+        events.sort(key=lambda e: e["score"], reverse=True)
     except requests.exceptions.RequestException as e:
         print(f"Error fetching events: {e}")
         events = []
