@@ -143,6 +143,32 @@
         z-index: 999;
         display: none;
     }
+    #bypass-button {
+        position: relative;
+        margin-right: 150px;
+    }
+
+    #bypass-button:hover::after {
+        content: attr(title); /* Tooltip text */
+        position: absolute;
+        bottom: 150%; /* Display above the button */
+        left: 50%; /* Start from the middle of the button */
+        transform: translateX(-50%); /* Center the tooltip horizontally */
+        background-color: #333;
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 0.9rem;
+        white-space: nowrap;
+        z-index: 1000;
+        opacity: 1;
+        transition: opacity 0.3s;
+    }
+
+    #bypass-button:hover::after {
+        opacity: 1;
+        display: block;
+    }
 </style>
 
 <div class="container">
@@ -168,21 +194,49 @@
 <div class="overlay" id="overlay" onclick="closeModal()"></div>
 <div class="modal" id="modal">
     <button class="modal-close" onclick="closeModal()">×</button>
-    <iframe id="modal-iframe" src=""></iframe>
+    <iframe id="modal-iframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+    <div style="position: absolute; bottom: 10px; right: 10px;">
+        <button id="bypass-button" style="padding: 10px 20px; font-size: 1rem; cursor: pointer; border: none; border-radius: 5px; background-color: #e74c3c; color: white;"
+            title="Click to open the article in a new tab if it doesn’t load here.">
+            Open in New Tab
+        </button>
+    </div>
 </div>
 
 <script>
     function openModal(url) {
+        if (!url || url === "undefined") {
+            alert("Invalid URL. Please try another news article.");
+            return;
+        }
+
         const modalIframe = document.getElementById('modal-iframe');
-        modalIframe.src = url; // Set the URL of the news page in the iframe
-        document.getElementById('overlay').style.display = 'block';
-        document.getElementById('modal').style.display = 'block';
+        const overlay = document.getElementById('overlay');
+        const modal = document.getElementById('modal');
+        const bypassButton = document.getElementById('bypass-button');
+
+        // Set iframe source and bypass button link
+        modalIframe.src = url;
+        bypassButton.onclick = () => {
+            window.open(url, '_blank'); // Open URL in a new tab
+        };
+
+        // Show the modal and overlay
+        overlay.style.display = 'block';
+        modal.style.display = 'block';
     }
 
     function closeModal() {
-        document.getElementById('overlay').style.display = 'none';
-        document.getElementById('modal').style.display = 'none';
-        document.getElementById('modal-iframe').src = ""; // Clear the iframe content
+        const overlay = document.getElementById('overlay');
+        const modal = document.getElementById('modal');
+        const modalIframe = document.getElementById('modal-iframe');
+
+        // Hide the modal and overlay
+        overlay.style.display = 'none';
+        modal.style.display = 'none';
+
+        // Clear the iframe content
+        modalIframe.src = "";
     }
 </script>
 
