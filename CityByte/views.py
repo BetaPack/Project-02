@@ -90,59 +90,64 @@ def city_news(request, city, country):
     return render(request, "info/news.html", context)
 
 def city_recommendations(request):
-    recommendation_type = request.GET.get("type")  # Get recommendation type from query params
+    recommendation_type = request.GET.get("type")  # Get the selected recommendation type
     recommendations = None
 
-    # If no type is selected, show only the selection form
-    if not recommendation_type:
-        return render(request, 'info/recommendations.html', {"recommendations": None, "type": None})
+    # Predefined city recommendations
+    CITY_RECOMMENDATIONS = {
+        "most_events": [
+            {"name": "New York", "country": "US", "description": "The city that never sleeps, hosting countless events.", "image": "path/to/new_york.jpg"},
+            {"name": "Los Angeles", "country": "US","description": "The entertainment capital of the world.", "image": "path/to/los_angeles.jpg"},
+            {"name": "Chicago", "country": "US","description": "Known for its music festivals and cultural events.", "image": "path/to/chicago.jpg"},
+            {"name": "Miami", "country": "US","description": "A hub for international art fairs and music festivals.", "image": "path/to/miami.jpg"},
+            {"name": "Austin", "country": "US","description": "The live music capital of the world.", "image": "path/to/austin.jpg"},
+            {"name": "Las Vegas", "country": "US","description": "Renowned for its vibrant nightlife and shows.", "image": "path/to/las_vegas.jpg"},
+            {"name": "San Francisco", "country": "US","description": "Home to iconic events like Pride and Fleet Week.", "image": "path/to/san_francisco.jpg"},
+            {"name": "Seattle", "country": "US","description": "Famous for its cultural festivals and concerts.", "image": "path/to/seattle.jpg"},
+            {"name": "Boston", "country": "US","description": "Known for its historical and cultural events.", "image": "path/to/boston.jpg"},
+            {"name": "Nashville", "country": "US","description": "The heart of country music and live performances.", "image": "path/to/nashville.jpg"}
+        ],
+        "landmarks": [
+            {"name": "Paris", "country": "FR","description": "Home to the Eiffel Tower, Louvre, and Notre-Dame.", "image": "path/to/paris.jpg"},
+            {"name": "Rome", "country": "IT","description": "The eternal city, rich with ancient landmarks like the Colosseum.", "image": "path/to/rome.jpg"},
+            {"name": "London", "country": "GB","description": "Famous for Big Ben, the Tower Bridge, and Buckingham Palace.", "image": "path/to/london.jpg"},
+            {"name": "Tokyo", "country": "JP","description": "Known for its historic temples and traditional gardens.", "image": "path/to/kyoto.jpg"},
+            {"name": "Athens", "country": "GR","description": "The cradle of Western civilization with the Acropolis.", "image": "path/to/athens.jpg"},
+            {"name": "Beijing", "country": "CN", "description": "Home to the Great Wall and the Forbidden City.", "image": "path/to/beijing.jpg"},
+            {"name": "Istanbul", "country": "TR", "description": "A bridge between Europe and Asia with iconic landmarks.", "image": "path/to/istanbul.jpg"},
+            {"name": "Machu Picchu", "country": "PE", "description": "The ancient Inca citadel high in the Andes.", "image": "path/to/machu_picchu.jpg"},
+            {"name": "Cairo", "country": "EG", "description": "Famous for the Pyramids of Giza and the Sphinx.", "image": "path/to/cairo.jpg"},
+            {"name": "New Delhi", "country": "IN", "description": "Known for the Red Fort, India Gate, and Qutub Minar.", "image": "path/to/new_delhi.jpg"}
+        ],
+        "dining": [
+            {"name": "Tokyo", "country": "JP","description": "A global hub for sushi, ramen, and Michelin-starred restaurants.", "image": "path/to/tokyo.jpg"},
+            {"name": "Paris", "country": "FR","description": "Known for its exquisite pastries and haute cuisine.", "image": "path/to/paris.jpg"},
+            {"name": "Bangkok", "country": "TH","description": "A street food paradise offering incredible flavors.", "image": "path/to/bangkok.jpg"},
+            {"name": "Barcelona", "country": "ES","description": "Famous for its tapas and Catalan cuisine.", "image": "path/to/barcelona.jpg"},
+            {"name": "New York", "country": "US","description": "Diverse dining options from pizza to fine dining.", "image": "path/to/new_york.jpg"},
+            {"name": "Istanbul", "country": "TR","description": "A blend of Middle Eastern and Mediterranean flavors.", "image": "path/to/istanbul.jpg"},
+            {"name": "Hong Kong", "country": "CN","description": "Renowned for its dim sum and Cantonese cuisine.", "image": "path/to/hong_kong.jpg"},
+            {"name": "Rome", "country": "IT","description": "Known for its authentic pasta, pizza, and gelato.", "image": "path/to/rome.jpg"},
+            {"name": "Singapore", "country": "SG","description": "Home to the iconic hawker stalls and fusion cuisine.", "image": "path/to/singapore.jpg"},
+            {"name": "San Francisco", "country": "US","description": "A foodie's paradise with world-class restaurants.", "image": "path/to/san_francisco.jpg"}
+        ],
+        "art": [
+            {"name": "Florence", "country": "IT", "description": "The birthplace of the Renaissance and Michelangelo's David.", "image": "path/to/florence.jpg"},
+            {"name": "Paris", "country": "FR", "description": "Home to the Louvre and Musée d'Orsay.", "image": "path/to/paris.jpg"},
+            {"name": "New York", "country": "US", "description": "Renowned for MoMA and the Met.", "image": "path/to/new_york.jpg"},
+            {"name": "London", "country": "GB", "description": "Famous for the British Museum and Tate Modern.", "image": "path/to/london.jpg"},
+            {"name": "Berlin", "country": "DE", "description": "A modern art hub with countless galleries.", "image": "path/to/berlin.jpg"},
+            {"name": "Venice", "country": "IT", "description": "Known for its Biennale art exhibitions.", "image": "path/to/venice.jpg"},
+            {"name": "Amsterdam", "country": "NL", "description": "Home to the Van Gogh Museum and Rijksmuseum.", "image": "path/to/amsterdam.jpg"},
+            {"name": "Vienna", "country": "AT", "description": "Rich with classical art and architecture.", "image": "path/to/vienna.jpg"},
+            {"name": "Tokyo", "country": "JP", "description": "A blend of traditional and modern art.", "image": "path/to/tokyo.jpg"},
+            {"name": "Los Angeles", "country": "US", "description": "Home to the Getty Center and LACMA.", "image": "path/to/los_angeles.jpg"}
+        ]
+    }
 
-    # Define LLM Prompt
-    recommendation_prompt = {
-        "most_events": "List cities with the most events happening currently, with a description and image URL.",
-        "landmarks": "List cities with the most famous landmarks, with a description and image URL.",
-        "dining": "List cities with the best dining experiences, with a description and image URL.",
-        "art": "List cities known for art and cultural scenes, with a description and image URL."
-    }.get(recommendation_type, "List top cities for travel recommendations.")
+    recommendations = CITY_RECOMMENDATIONS.get(recommendation_type, [])
 
-    try:
-        # Initialize LLM
-        my_llm = initialize_gemini_llm()
-        my_prompt = PromptTemplate.from_template(recommendation_prompt)
-        chain = LLMChain(llm=my_llm, prompt=my_prompt, verbose=False)
-
-        # Call LLM
-        response = chain.invoke(input={})
-        recommendations = parse_llm_response(response['text'])
-
-    except Exception as e:
-        print(f"Error occurred: {e}")
-        recommendations = None
-
-    return render(request, 'info/recommendations.html', {
+    return render(request, "info/recommendations.html", {
         "recommendations": recommendations,
         "type": recommendation_type,
     })
-
-
-def parse_llm_response(response_text):
-    """
-    Parses the LLM response into structured data.
-    """
-    recommendations = []
-    lines = response_text.split("\n")
-    for line in lines:
-        if line.strip():
-            try:
-                parts = line.split(":")
-                city = parts[0].strip(" -**")
-                description, image_url = parts[1].rsplit("(", 1)
-                image_url = image_url.strip(")")
-                recommendations.append({
-                    "name": city,
-                    "description": description.strip(),
-                    "image": image_url.strip()
-                })
-            except (IndexError, ValueError):
-                continue
-    return recommendations
