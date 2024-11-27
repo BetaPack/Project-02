@@ -45,6 +45,10 @@ Although we have used HTML, CSS and Bootstrap for the frontend logic the user ca
 
 ### Demo Video
 For a walkthrough of the updated features, watch the demo video here:  
+[![Watch the video](https://markdown-videos-api.jorgenkh.no/youtube/UN7jMGmCCRE)](https://youtu.be/UN7jMGmCCRE)
+
+Animated Trailer:
+
 [![Watch the video](https://markdown-videos-api.jorgenkh.no/youtube/nC0bPAi8Ksc)](https://www.youtube.com/watch?v=nC0bPAi8Ksc)
 
 
