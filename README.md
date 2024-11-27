@@ -7,7 +7,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7155519.svg)](https://doi.org/10.5281/zenodo.7155519)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub issues](https://img.shields.io/github/issues/BetaPack/Project-02.svg)](https://GitHub.com/BetaPack/Project-02/issues/)
-[![GitHub issues-closed](https://img.shields.io/github/issues-closed/BetaPack/Project-02.svg)](https://GitHub.com/BetaPack/Project-02/issues?q=is%3Aissue+is%3Aclosed)
+[![GitHub issues-closed](https://img.shields.io/github/issues-closed/BetaPack/Project-02.svg)](https://github.com/BetaPack/Project-02/issues?q=is%3Aissue+is%3Aclosed)
 [![GitHub version](https://img.shields.io/github/v/release/BetaPack/Project-02)](https://github.com/BetaPack/Project-02/releases)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
