@@ -24,7 +24,10 @@ import os
 import markdown
 from django.shortcuts import render
 from info.helpers.newsapi_helper import NewsAPIHelper
-
+from django.http import HttpResponse
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from django.views.decorators.csrf import csrf_protect
 
 class SignUpView(generic.CreateView):
     form_class = UserCreationForm
@@ -46,6 +49,7 @@ def initialize_gemini_llm():
     my_llm = ChatGoogleGenerativeAI(model='gemini-pro', api_key=api_key)
     return my_llm
 
+@csrf_protect
 def city_info(request, city_name):
     itinerary = None  # To store the generated itinerary
     google_maps_client = googlemaps.Client(key=settings.GOOGLE_MAPS_API_KEY)  # API key from settings
@@ -67,10 +71,14 @@ def city_info(request, city_name):
         
         # Invoke the chain with both inputs
         response = chain.invoke(input=inputs)
-        
-        # Get the response text from the LLM
+
+        # Save the generated itinerary to the session
         itinerary = response.get('text', '')
+        request.session['itinerary'] = itinerary
+
         if 'download' in request.POST:
+            days = request.POST.get('days')
+            itinerary = request.session.get('itinerary', 'No itinerary available.')  # Retrieve saved itinerary
             return generate_pdf_itinerary(itinerary, city_name)
         # Get top dining spots and landmarks using Google Maps API
         dining_info = google_maps_client.places(query="restaurants in " + city_name)
@@ -99,6 +107,9 @@ def generate_pdf_itinerary(itinerary, city_name):
     for line in itinerary.splitlines():
         p.drawString(100, y_position, line)
         y_position -= 20
+        if y_position < 50:  # Check if the page is full
+            p.showPage()
+            y_position = 750
     p.showPage()
     p.save()
     

@@ -13,6 +13,12 @@
             <div class="itinerary-content text-dark">
                 {{ itinerary|safe }}
             </div>
+
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="download" value="true">
+                <button type="submit" class="btn btn-primary mt-4">Download Itinerary as PDF</button>
+            </form>
         {% else %}
             <p class="text-center text-muted">No itinerary available. Please go back and try again.</p>
         {% endif %}
