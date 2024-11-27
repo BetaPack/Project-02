@@ -12,7 +12,10 @@ from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
 from django.views import generic
 from django.shortcuts import render
- 
+from django.http import HttpResponse
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.views import PasswordResetView
 from django.shortcuts import render
 from django.shortcuts import render
@@ -49,9 +52,16 @@ def initialize_gemini_llm():
     my_llm = ChatGoogleGenerativeAI(model='gemini-pro', api_key=api_key)
     return my_llm
 
+@csrf_protect
 def city_info(request, city_name):
     itinerary = None  # To store the generated itinerary
     if request.method == 'POST':
+        # Check if the "Download" button was clicked
+        if 'download' in request.POST:
+            days = request.POST.get('days')
+            itinerary = request.session.get('itinerary', 'No itinerary available.')  # Retrieve saved itinerary
+            return generate_pdf_itinerary(itinerary, city_name)
+
         # Get the number of days from the form input
         days = request.POST.get('days')
 
@@ -71,16 +81,44 @@ def city_info(request, city_name):
         response = chain.invoke(input=inputs)
         
         # Get the response text from the LLM
-        itinerary = response
-
-        itinerary=itinerary['text']
-
-        itinerary=markdown.markdown(itinerary)
+        itinerary = response.get('text', '')
+        
+        # Save itinerary to session for later use
+        request.session['itinerary'] = itinerary
         
         return render(request, 'info/itinerary.html', {
             'city': city_name,
-            'itinerary': itinerary
+            'itinerary': itinerary,
+            'dining_info': dining_info['results'],
+            'landmark_info': landmark_info['results'],
         })
+    
+    return render(request, 'info/itinerary.html', {'city': city_name})
+
+
+# Generate PDF from itinerary
+def generate_pdf_itinerary(itinerary, city_name):
+    # Create a response object
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename={city_name}_itinerary.pdf'
+
+    # Create the PDF
+    p = canvas.Canvas(response, pagesize=letter)
+    p.drawString(100, 750, f"Itinerary for {city_name}")
+    p.drawString(100, 730, "--------------------------------------------")
+    
+    # Add the itinerary to the PDF
+    y_position = 710
+    for line in itinerary.splitlines():
+        p.drawString(100, y_position, line)
+        y_position -= 20
+        if y_position < 50:  # Check if the page is full
+            p.showPage()
+            y_position = 750
+    p.showPage()
+    p.save()
+    
+    return response
     
 def city_news(request, city, country):
     news_api_helper = NewsAPIHelper()
