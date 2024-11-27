@@ -1,4 +1,4 @@
-# CityByte Project 2
+# CityByte Project 3
 
 [![Test](https://github.com/BetaPack/CityByte/actions/workflows/django.yml/badge.svg)](https://github.com/BetaPack/CityByte/actions/workflows/django.yml)
 [![codecov](https://codecov.io/gh/AshwiniR1802/CityByte-main/graph/badge.svg?token=QIBKVW0QLW)](https://codecov.io/gh/AshwiniR1802/CityByte-main)
